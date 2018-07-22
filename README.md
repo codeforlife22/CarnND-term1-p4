@@ -15,13 +15,17 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/camera_calibration_test1.jpg "Undistorted1"
-[image2]: ./output_images/camera_calibration_test2.jpg "Undistorted2"
-[image3]: ./output_images/camera_calibration_test3.jpg "Undistorted3"
-
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
+[image1]: ./output_images/camera_calibration_test1.png "Undistorted1"
+[image2]: ./output_images/camera_calibration_test2.png "Undistorted2"
+[image3]: ./output_images/camera_calibration_test3.png "Undistorted3"
+[image4]: ./output_images/gradientx_thresh.png "gradientx"
+[image5]: ./output_images/color_space_thresh1.png "colorth1"
+[image6]: ./output_images/color_space_thresh2.png "colorth2"
+[image7]: ./output_images/combine_thresh.png "combineth"
+[image8]: ./output_images/perspective_test1.png "pers1"
+[image9]: ./output_images/perspective_test2.png "pers2"
+[image10]: ./output_images/fit_poly.png "fitpoly"
+[image11]: ./output_images/exampe_image.png "example"
 [video1]: ./project_video_output.mp4 "Video"
 
 
@@ -45,63 +49,61 @@ Using the camera calibration and distortion coefficients obtained from the previ
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+I used a combination of color and gradient thresholds to generate a binary image. 
+1) Selecting a proper threshold in x-orientation gradient helps greatly in lane line detection. (code cells [66] - [69])
+Here is an example of applying gradient thresholding in x-direction. 
+![alt text][image4]
 
-![alt text][image3]
+In addition to x-gradient, magnitute and directional gradient also help in detection lane lines, therefore, thresholding in all three gradients were adopted in this project. 
 
-#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+2) Processing images in HLS color space enhances lane line detections, especially for yellow lines. (code cells [70] - [72])
+Below is a example that demonstrates the power of proper thresholing in each individual channel of HLS color space,
+![alt text][image5]
+![alt text][image6]
+In this project, color thresholding in L and S channels are used, and L Channel has proved to be very useful for handling images with shadows (different lighting conditions).
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+Combining color and gradient thresholds, the output image is shown below,
+![alt text][image7]
+#### 3. Perspective transfrom
 
-```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
-```
-
-This resulted in the following source and destination points:
+The code for my perspective transform includes two functions called `cal_warp()` and `get_warped_image()`, which appears in cell [63] in jupyter notebook.  The `cal_warp()` function takes as inputs an image (`img`). I chose the following hardcoded source and destination points (clockwise from the top left point, based on the example warpped image provided by Udacity) :
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 590, 450      | 290, 0        | 
+| 685, 450      | 1030, 0       |
+| 1120, 720     | 1030, 720     |
+| 200, 720      | 290, 720      |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+I verified that my perspective transform was working as expected by applying perspective transfrom to all test images, 
+and I selected two examples for illustration purpose.
+![alt text][image8]
+![alt text][image9]
+#### 4. Lane pixels identification and curve fitting (cell [121])
+Firstly, I used histogram peak identification to find the starting points for left lane and right lane, respectively. Then sliding window technique was utilized to find all lane pixels. Finally, I tried to fit the lane lines to a second-order polynomial curve.
+An example image is shown below:
 
-![alt text][image4]
+![alt text][image10]
 
-#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+#### 5. Curvature and vehicle position calculation (cell [122])
+The caculate curvature in real world, I first defined conversions in x and y from pixels space to meters (from lecture)
+ym_per_pix = 30/720 # meters per pixel in y dimension
+xm_per_pix = 3.7/700 # meters per pixel in x dimension
+Then I did a np.polyfit(...) with the transformed real-world coordindates to obtain the polynomial coefficients, and curvature can be calculated readily. 
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+The offset of the lane center from the center of the image (converted from pixels to meters) is the distance from the center of the lane. 
 
-![alt text][image5]
+#### 6. Plot the detected lane area and auxillary info on top of the original image
 
-#### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
+I implemented this step in cell [123]. Here is an example of my result on a test image:
 
-I did this in lines # through # in my code in `my_other_file.py`
-
-#### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
-
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
-
-![alt text][image6]
+![alt text][image11]
 
 ---
 
 ### Pipeline (video)
 
-#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
-
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./project_video_output.mp4)
 
 ---
 
@@ -109,4 +111,7 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+There was some issues when the lane lines are in shadows, the detected area seems to be very unstable. 
+To counter this problem, I added color thresholing in L channel of HLS color space, which proves to be quite effective. 
+
+It may be very chanllenging to detection lane line if the images are subject to large lighting variations. Another issue that I can think of is when cars changing lanes, the pipeline may accidently pick up pixels from the cars and mistake them for lane lines.  To make it more robust, techniques such as taking average across different frames, and tracking the previously identified parameters can be adopted.  
