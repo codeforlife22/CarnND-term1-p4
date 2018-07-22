@@ -109,7 +109,6 @@ Here's a [link to my video result](./project_video_output.mp4)
 
 ### Discussion
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 There was some issues when the lane lines are in shadows, the detected area seems to be very unstable. 
 To counter this problem, I added color thresholing in L channel of HLS color space, which proves to be quite effective. 
