@@ -103,7 +103,7 @@ I implemented this step in cell [123]. Here is an example of my result on a test
 
 ### Pipeline (video)
 
-Here's a [link to my video result](./project_video_output.mp4)
+Here's a [link to my video result](https://github.com/codeforlife22/CarnND-term1-p4/blob/master/project_video_out.mp4)
 
 ---
 
