@@ -43,7 +43,7 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 ### Pipeline (single images)
 
 #### 1. A distortion-corrected image.
-Using the camera calibration and distortion coefficients obtained from the previous step, it is easy to get a undistorted image. Here is an example,
+Using the camera calibration and distortion coefficients obtained from the previous step, it is easy to get an undistorted image. Here is an example,
 
 ![alt text][image3]
 
@@ -54,13 +54,13 @@ I used a combination of color and gradient thresholds to generate a binary image
 Here is an example of applying gradient thresholding in x-direction. 
 ![alt text][image4]
 
-In addition to x-gradient, magnitute and directional gradient also help in detection lane lines, therefore, thresholding in all three gradients were adopted in this project. 
+In addition to x-gradient, magnitute and directional gradient also help in detecting lane lines, therefore, thresholding in all three gradients were adopted in this project. 
 
 2) Processing images in HLS color space enhances lane line detections, especially for yellow lines. (code cells [70] - [72])
 Below is a example that demonstrates the power of proper thresholing in each individual channel of HLS color space,
 ![alt text][image5]
 ![alt text][image6]
-In this project, color thresholding in L and S channels are used, and L Channel has proved to be very useful for handling images with shadows (different lighting conditions).
+In this project, color thresholding in L and S channels are used, and L Channel has been proved to be very useful for handling images with shadows (different lighting conditions).
 
 Combining color and gradient thresholds, the output image is shown below,
 ![alt text][image7]
