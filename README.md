@@ -88,12 +88,12 @@ An example image is shown below:
 ![alt text][image10]
 
 #### 5. Curvature and vehicle position calculation (cell [122])
-The caculate curvature in real world, I first defined conversions in x and y from pixels space to meters (from lecture)
+To caculate curvature in real world, I first defined conversions in x and y from pixels space to meters (from lecture)
 ym_per_pix = 30/720 # meters per pixel in y dimension
 xm_per_pix = 3.7/700 # meters per pixel in x dimension
 Then I did a np.polyfit(...) with the transformed real-world coordindates to obtain the polynomial coefficients, and curvature can be calculated readily. 
 
-The offset of the lane center from the center of the image (converted from pixels to meters) is the distance from the center of the lane. 
+The offset of the lane center from the center of the image (converted from pixels to meters) is the distance from the center of the lane, and is calcuated after histogram peak identification.
 
 #### 6. Plot the detected lane area and auxillary info on top of the original image
 
