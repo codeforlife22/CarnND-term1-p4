@@ -112,7 +112,7 @@ Here's a [link to my video result](https://github.com/codeforlife22/CarnND-term1
 ### Discussion
 
 
-There was some issues when the lane lines are in shadows, the detected area seems to be very unstable. 
+There were some issues when the lane lines are in shadows, the detected area seems to be very unstable. 
 To counter this problem, I added color thresholing in L channel of HLS color space, which proves to be quite effective. 
 
 It may be very chanllenging to detection lane line if the images are subject to large lighting variations. Another issue that I can think of is when cars changing lanes, the pipeline may accidently pick up pixels from the cars and mistake them for lane lines.  To make it more robust, techniques such as taking average across different frames, and tracking the previously identified parameters can be adopted.  
