@@ -47,7 +47,7 @@ Using the camera calibration and distortion coefficients obtained from the previ
 
 ![alt text][image3]
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+#### 2. Gradient and color thresholding
 
 I used a combination of color and gradient thresholds to generate a binary image. 
 1) Selecting a proper threshold in x-orientation gradient helps greatly in lane line detection. (code cells [66] - [69])
@@ -64,6 +64,7 @@ In this project, color thresholding in L and S channels are used, and L Channel 
 
 Combining color and gradient thresholds, the output image is shown below,
 ![alt text][image7]
+
 #### 3. Perspective transfrom
 
 The code for my perspective transform includes two functions called `cal_warp()` and `get_warped_image()`, which appears in cell [63] in jupyter notebook.  The `cal_warp()` function takes as inputs an image (`img`). I chose the following hardcoded source and destination points (clockwise from the top left point, based on the example warpped image provided by Udacity) :
@@ -79,6 +80,7 @@ I verified that my perspective transform was working as expected by applying per
 and I selected two examples for illustration purpose.
 ![alt text][image8]
 ![alt text][image9]
+
 #### 4. Lane pixels identification and curve fitting (cell [121])
 Firstly, I used histogram peak identification to find the starting points for left lane and right lane, respectively. Then sliding window technique was utilized to find all lane pixels. Finally, I tried to fit the lane lines to a second-order polynomial curve.
 An example image is shown below:
